@@ -1,47 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public float speed = 5.0f;
-    public int health = 100;
-    private Transform player;
-    private Rigidbody rb;
+    protected Transform player;
+    public float speed = 2f;
+    public float health = 100f;  // Añadir una variable para la salud del enemigo
 
-    void Start()
+    protected virtual void Start()
     {
-        rb = GetComponent<Rigidbody>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
-
-        if (rb == null)
-        {
-            Debug.LogError("Rigidbody no encontrado en el enemigo.");
-        }
-        if (player == null)
-        {
-            Debug.LogError("No se encontró al jugador.");
-        }
-
-        // Asegurarse de que la gravedad esté desactivada
-        rb.useGravity = false;
     }
 
-    void FixedUpdate()
+    protected virtual void Update()
     {
-        if (player != null)
-        {
-            Vector3 direction = (player.position - transform.position).normalized;
-            rb.MovePosition(transform.position + direction * speed * Time.fixedDeltaTime);
-        }
+        MoveTowardsPlayer();
     }
 
-    public void TakeDamage(int damage)
+    protected virtual void MoveTowardsPlayer()
     {
-        health -= damage;
+        Vector3 direction = (player.position - transform.position).normalized;
+        transform.position += direction * speed * Time.deltaTime;
+    }
+
+    public void TakeDamage(float amount)
+    {
+        // Reducir la salud del enemigo
+        health -= amount;
+
+        // Si la salud del enemigo llega a cero, destruir el enemigo
         if (health <= 0)
         {
             Destroy(gameObject);
+            FindObjectOfType<EnemySpawner>().EnemyDestroyed();
         }
     }
 }

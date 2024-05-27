@@ -1,14 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BlackEnemy : Enemy
 {
-    void OnTriggerEnter2D(Collider2D other)
+    protected override void MoveTowardsPlayer()
     {
-        if (other.CompareTag("BlackBullet"))
-        {
-            TakeDamage(50);
-        }
+        base.MoveTowardsPlayer();
     }
 }
