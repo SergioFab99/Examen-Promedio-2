@@ -9,7 +9,8 @@ public class PlayerController : MonoBehaviour
     public float health = 100f;
     public GameObject blackBulletPrefab;
     public GameObject whiteBulletPrefab;
-    public Transform[] shootPoints;
+    public Transform blackShootPoint; // Cambiado de shootPoint a blackShootPoint
+    public Transform whiteShootPoint; // Cambiado de shootPoint2 a whiteShootPoint
     public float bulletSpeed = 10f;
     public float fireRate = 0.5f;
     private float nextFireTime;
@@ -48,22 +49,26 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButton(0) && Time.time > nextFireTime)
         {
             nextFireTime = Time.time + fireRate;
-            Shoot(blackBulletPrefab);
+            Shoot(blackBulletPrefab, blackShootPoint);
         }
         else if (Input.GetMouseButton(1) && Time.time > nextFireTime)
         {
             nextFireTime = Time.time + fireRate;
-            Shoot(whiteBulletPrefab);
+            Shoot(whiteBulletPrefab, whiteShootPoint);
         }
     }
 
-    void Shoot(GameObject bulletPrefab)
+    void Shoot(GameObject bulletPrefab, Transform shootPoint)
     {
-        foreach (Transform shootPoint in shootPoints)
+        GameObject bullet = Instantiate(bulletPrefab, shootPoint.position, shootPoint.rotation);
+        // Asignar la dirección de la bala en función de la rotación del shootPoint
+        if (bulletPrefab.GetComponent<BlackBullet>() != null)
         {
-            GameObject bullet = Instantiate(bulletPrefab, shootPoint.position, Quaternion.identity);
-            Rigidbody rb = bullet.GetComponent<Rigidbody>();
-            rb.velocity = Vector3.up * bulletSpeed;
+            bullet.GetComponent<BlackBullet>().Initialize(shootPoint.forward);
+        }
+        else if (bulletPrefab.GetComponent<WhiteBullet>() != null)
+        {
+            bullet.GetComponent<WhiteBullet>().Initialize(shootPoint.forward);
         }
     }
 
