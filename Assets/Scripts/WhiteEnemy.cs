@@ -6,4 +6,13 @@ public class WhiteEnemy : Enemy
     {
         base.MoveTowardsPlayer();
     }
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("WhiteBullet"))
+        {
+            // Manejar la colisión con el enemigo
+            Destroy(gameObject);
+            FindObjectOfType<EnemySpawner>().EnemyDestroyed();
+        }
+    }
 }
